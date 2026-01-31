@@ -23,4 +23,12 @@ export const MOVIES = [
     runtime: 200,
     rating: 8.6,
   },
+  {
+    id: 4,
+    title: "Interstellar",
+    genre: "Sci-Fi",
+    releaseYear: 2014,
+    runtime: 200,
+    rating: 8.6,
+  },
 ] as const;
