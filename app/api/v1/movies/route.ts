@@ -1,14 +1,28 @@
 import { NextResponse } from "next/server";
 // TODO: Replace with database call
 import { MOVIES } from "@/lib/data";
+import { db } from "@/db";
 
 // GET /api/v1/movies
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const limit = searchParams.get("limit") || "50";
+
+    const movies = await db
+      .collection("movies")
+      .find()
+      .limit(parseInt(limit))
+      .toArray()
+      .catch((error) => {
+        console.error("Database query failed:", error);
+        throw new Error("Failed to retrieve movies from the database");
+      });
+
     return NextResponse.json({
       message: "Successfully retrieved all movies",
       success: true,
-      movies: MOVIES,
+      movies: movies,
     });
   } catch (error) {
     console.error("Error retrieving movies:", (error as Error).message);

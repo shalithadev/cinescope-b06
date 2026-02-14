@@ -1,10 +1,14 @@
 export interface MovieData {
-  id: number;
+  _id: string;
   title: string;
-  genre: string;
-  releaseYear: number;
-  rating: number;
+  plot: string;
+  poster: string;
+  genres: string[];
+  year: number;
+  imdb: { rating: number };
   runtime: number;
+  type: string;
+  directors: string[];
 }
 
 export interface MoviesActionResponse {

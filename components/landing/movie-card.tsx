@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Card,
   CardAction,
@@ -7,14 +8,25 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import type { MovieData } from "@/actions/types";
 
-export default function MovieCard() {
+interface MovieCardProps {
+  movie: MovieData;
+}
+
+export default function MovieCard({ movie }: MovieCardProps) {
   return (
     <Card>
+      <Image
+        src={movie.poster ?? "/placeholder.svg"}
+        alt="Movie Poster"
+        width={300}
+        height={450}
+      />
       <CardHeader>
-        <CardTitle>Card Title</CardTitle>
-        <CardDescription>Card Description</CardDescription>
-        <CardAction>Card Action</CardAction>
+        <CardTitle>{movie.title}</CardTitle>
+        <CardDescription>{movie.year}</CardDescription>
+        <CardAction>View Details</CardAction>
       </CardHeader>
       <CardContent>
         <p>Card Content</p>
