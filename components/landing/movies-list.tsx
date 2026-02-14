@@ -7,7 +7,7 @@ export default async function MoviesList() {
   console.log("Fetching movies list...");
   // await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate async data fetching
   const movies = await getMovies({ limit: 12 });
-  console.log("Movies fetched:", movies);
+  // console.log("Movies fetched:", movies);
 
   if (!movies || movies.length === 0) {
     return (
@@ -16,12 +16,15 @@ export default async function MoviesList() {
   }
 
   return (
-    <div className="text-center py-12">
-      <div className="grid grid-cols-4 gap-6">
+    <>
+      <div className="text-muted-foreground text-sm">
+        Showing {movies.length} of 100 movies.
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {movies.map((movie) => (
-          <MovieCard key={`movie-id-${movie._id}`} movie={movie} />
+          <MovieCard key={`movie-${movie._id}`} movie={movie} />
         ))}
       </div>
-    </div>
+    </>
   );
 }

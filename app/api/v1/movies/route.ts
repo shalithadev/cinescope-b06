@@ -13,6 +13,8 @@ export async function GET(request: Request) {
       .collection("movies")
       .find()
       .limit(parseInt(limit))
+      .sort({ released: -1 }) // Sort by released date in descending order (newest first)
+      // .sort({ "imdb.rating": -1 }) // Sort by IMDb rating in descending order (highest rated first)
       .toArray()
       .catch((error) => {
         console.error("Database query failed:", error);
