@@ -11,6 +11,7 @@ import {
   // CardHeader,
   // CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { MovieData } from "@/actions/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +23,7 @@ interface MovieCardProps {
 export default function MovieCard({ movie }: MovieCardProps) {
   const [posterUrl, setPosterUrl] = useState(movie.poster);
   return (
-    <Card className="border-primary/20 hover:border-primary/50 overflow-hidden py-0 gap-2 transition-colors">
+    <Card className="border-primary/20 hover:border-primary/50 overflow-hidden py-0 gap-0 transition-colors">
       <div className="aspect-2/3 w-full overflow-hidden">
         <Image
           src={posterUrl || "/placeholder.svg"}
@@ -72,5 +73,32 @@ export default function MovieCard({ movie }: MovieCardProps) {
         </Button>
       </CardFooter>
     </Card>
+  );
+}
+
+export function MovieCardSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-lg border border-primary/20 animate-pulse">
+      {/* Movie Cover Image */}
+      <Skeleton className="aspect-2/3 w-full" />
+      <div className="p-4">
+        {/* Movie title and description */}
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+
+        {/* Genre badges */}
+        <div className="flex mt-3 gap-1">
+          <Skeleton className="h-5 w-1/5" />
+          <Skeleton className="h-5 w-1/5" />
+        </div>
+
+        <div className="flex justify-between gap-2 mt-6">
+          <Skeleton className="h-8 w-18 rounded-full" />
+          <Skeleton className="h-8 w-18 rounded-full" />
+        </div>
+      </div>
+    </div>
   );
 }

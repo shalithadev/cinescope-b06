@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { inter, roboto_mono } from "@/app/fonts";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 // Metadata for the cinescope app
@@ -19,7 +20,7 @@ export default function RootLayout({
       <body
         className={cn(inter.variable, roboto_mono.variable, inter.className)}
       >
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   );

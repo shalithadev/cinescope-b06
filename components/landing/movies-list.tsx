@@ -1,5 +1,8 @@
-import MovieCard from "@/components/landing/movie-card";
+// import { Fragment } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import MovieCard, { MovieCardSkeleton } from "@/components/landing/movie-card";
 import { getMovies } from "@/actions/movies";
+import { Fragment } from "react/jsx-runtime";
 
 // Sever component that displays a list of movies
 // Asynchronously fetches movie data (simulated here with a placeholder)
@@ -28,3 +31,31 @@ export default async function MoviesList() {
     </>
   );
 }
+
+export function MoviesListSkeleton() {
+  return (
+    // React Fragment to wrap the skeleton components
+    <>
+      <Skeleton className="h-4 w-56" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {Array.from({ length: 8 }).map((_, index) => (
+          <MovieCardSkeleton key={`movie-skeleton-${index}`} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+// export function MoviesListSkeleton() {
+//   return (
+//     // React Fragment to wrap the skeleton components
+//     <Fragment>
+//       <Skeleton className="h-4 w-56" />
+//       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+//         {Array.from({ length: 8 }).map((_, index) => (
+//           <MovieCardSkeleton key={`movie-skeleton-${index}`} />
+//         ))}
+//       </div>
+//     </Fragment>
+//   );
+// }

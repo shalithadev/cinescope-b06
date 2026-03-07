@@ -1,5 +1,6 @@
-import { Button } from "../ui/button";
-import MoviesList from "./movies-list";
+import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import MoviesList, { MoviesListSkeleton } from "./movies-list";
 
 export default function FeaturedMovies() {
   return (
@@ -27,7 +28,9 @@ export default function FeaturedMovies() {
         <div className="w-full h-30.5 bg-purple-400 rounded-lg"></div>
 
         {/* Movies List */}
-        <MoviesList />
+        <Suspense fallback={<MoviesListSkeleton />}>
+          <MoviesList />
+        </Suspense>
       </div>
     </section>
   );

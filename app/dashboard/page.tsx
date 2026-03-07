@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <main className="flex-10 flex flex-col gap-6 items-center justify-center bg-green-200">
+    <div className="flex-10 flex flex-col gap-6 items-center justify-center">
       <h1 className="text-4xl font-bold">Dashboard Page</h1>
 
       <LogoutButton />
-    </main>
+    </div>
   );
 }
