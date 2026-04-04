@@ -1,3 +1,4 @@
+// This is the basic layout for the dashboard pages. It includes a sidebar and a main content area.
 export default function DashboardLayout({
   children,
 }: Readonly<{

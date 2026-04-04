@@ -2,6 +2,8 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/dashboard/admin-sidebar";
 import AdminHeader from "@/components/dashboard/admin-header";
 
+// This layout is used for all routes under /dashboard
+// This layout html renders only once, and the children are rendered inside it. This is useful for things like navigation bars that should persist across all dashboard pages.
 export default function DashboardLayout({
   children,
 }: Readonly<{
