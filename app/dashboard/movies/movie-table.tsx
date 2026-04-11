@@ -10,54 +10,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import type { Movie } from "./types";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { MovieThumbnail } from "./movie-thumbnail";
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-    paymentMethod2: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-];
+interface MovieTableProps {
+  movies: Movie[];
+}
 
-export default function MovieTable() {
+export default function MovieTable({ movies }: MovieTableProps) {
+  // Helper function to determine badge color based on movie status
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case "published":
+        return "bg-green-100 text-green-800 border-green-200";
+      case "draft":
+        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+      case "archived":
+        return "bg-red-100 text-red-800 border-red-200";
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200";
+    }
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -76,23 +52,49 @@ export default function MovieTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-              <TableCell className="font-medium">{invoice.invoice}</TableCell>
-              <TableCell>{invoice.paymentStatus}</TableCell>
-              <TableCell>{invoice.paymentMethod}</TableCell>
+          {movies.map((movie, idx) => (
+            <TableRow key={`movie-${movie.id}-${idx}`}>
+              <TableCell className="font-medium">{idx + 1}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <MovieThumbnail poster={movie.poster} title={movie.title} />
+                  <span className="font-medium max-w-60 text-wrap line-clamp-2">
+                    {movie.title}
+                  </span>
+                </div>
+              </TableCell>
+              <TableCell>{movie.year}</TableCell>
+              <TableCell>
+                <div className="flex flex-wrap gap-1">
+                  {movie.genres.map((genre, idx) => (
+                    <Badge
+                      key={`genre-${genre}-${idx}`}
+                      variant="outline"
+                      className="text-xs rounded-md"
+                    >
+                      {genre}
+                    </Badge>
+                  ))}
+                </div>
+              </TableCell>
+              <TableCell>{Number(movie.imdb.rating).toFixed(1)}</TableCell>
+              <TableCell>
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "rounded-md capitalize text-xs",
+                    getStatusClass(movie.status ?? "published"),
+                  )}
+                >
+                  {movie.status ?? "Published"}
+                </Badge>
+              </TableCell>
               <TableCell className="text-right">
-                {invoice.totalAmount}
+                <div>Action</div>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter>
       </Table>
     </div>
   );
