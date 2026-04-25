@@ -24,6 +24,8 @@ export default async function MovieData() {
       imdb: movie.imdb,
     }));
 
+    // console.log("Refined Movies:", refinedMovies);
+
     return <MovieTable movies={refinedMovies} />;
   } catch {
     return <div>No Movies Available!</div>;

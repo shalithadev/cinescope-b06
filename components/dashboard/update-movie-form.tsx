@@ -16,20 +16,44 @@ import {
 import { DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { getAllYears, getAllGenres, getAllStatuses } from "@/lib/utils";
-import { addMovie } from "@/actions/movies";
+import { updateMovie } from "@/actions/movies";
 import type { AddMovieData } from "@/actions/types";
+import type { Movie } from "@/app/dashboard/movies/types";
 
-interface AddMovieFormProps {
+interface UpdateMovieFormProps {
   showDialog: (value: boolean) => void;
+  movie?: Movie | null; // Assuming movie is a MongoDB document with an _id field
 }
 
-export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
+export default function UpdateMovieForm({
+  showDialog,
+  movie,
+}: UpdateMovieFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formState, setFormState] = useState({
+    title: movie?.title || "",
+    year: movie?.year || "",
+    director: movie?.directors?.at(0) || "",
+    genre: movie?.genres?.at(0) || "",
+    rating: movie?.imdb?.rating || "",
+    runtime: movie?.runtime || "",
+    overview: movie?.plot || "",
+    poster: movie?.poster || "",
+    backdrop: movie?.backdrop || "",
+    status: movie?.status || "",
+  });
   const [error, setError] = useState<string | null>(null);
   const years = getAllYears();
   const genres = getAllGenres();
   const statuses = getAllStatuses();
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target;
+    setFormState((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,7 +61,7 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
 
     // const data = Object.fromEntries(formData.entries());
 
-    const movie: AddMovieData = {
+    const movieDoc: AddMovieData = {
       title: formData.get("title") ?? "",
       year: Number(formData.get("year")) ?? "",
       directors: [formData.get("director") ?? ""],
@@ -57,22 +81,29 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
     setIsSubmitting(true);
 
     try {
-      const response = await addMovie(movie);
+      if (!movie || !movie.id) {
+        setError("Invalid movie data. Cannot update.");
+        return;
+      }
+
+      const response = await updateMovie(movie.id, movieDoc);
 
       if (response.success) {
         router.refresh(); // Refresh the page to show the new movie in the list
         // hide the dialog after successful submission
         showDialog(false);
       } else {
-        console.log("Failed to add movie:", response.message);
+        console.log("Failed to update movie:", response.message);
         setError(response.message);
       }
     } catch (error) {
-      console.error("Error adding movie:", error);
+      console.error("Error updating movie:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // convert inputs to controlled inputs by setting value and onChange handler
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
@@ -86,7 +117,9 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
             name="title"
             type="text"
             placeholder="Movie title"
-            // required
+            value={formState.title}
+            onChange={handleChange}
+            required
           />
         </div>
 
@@ -94,7 +127,14 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
           <Label htmlFor="title">
             Year<span className="text-red-500">*</span>
           </Label>
-          <Select name="year">
+          <Select
+            name="year"
+            required
+            onValueChange={(value) =>
+              setFormState((prev) => ({ ...prev, year: value }))
+            }
+            value={formState.year.toString()}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Please select a year" />
             </SelectTrigger>
@@ -120,12 +160,21 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
             type="text"
             placeholder="Director name"
             required
+            value={formState.director}
+            onChange={handleChange}
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="title">Genre</Label>
-          <Select name="genre" required>
+          <Select
+            name="genre"
+            required
+            onValueChange={(value) =>
+              setFormState((prev) => ({ ...prev, genre: value }))
+            }
+            value={formState.genre}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Please select a genre" />
             </SelectTrigger>
@@ -154,6 +203,8 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
             step="0.1"
             placeholder="IMDb Rating"
             required
+            value={formState.rating}
+            onChange={handleChange}
           />
         </div>
 
@@ -167,6 +218,8 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
             max="1000"
             step="1"
             placeholder="Runtime in minutes"
+            value={formState.runtime}
+            onChange={handleChange}
             required
           />
         </div>
@@ -179,6 +232,8 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
           name="overview"
           placeholder="Movie description"
           className="h-25 w-full resize-none"
+          value={formState.overview}
+          onChange={handleChange}
           required
         />
       </div>
@@ -193,6 +248,8 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
             name="poster"
             type="text"
             placeholder="URL to movie poster image"
+            value={formState.poster}
+            onChange={handleChange}
             required
           />
         </div>
@@ -206,13 +263,22 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
             name="backdrop"
             type="text"
             placeholder="URL to movie backdrop image"
+            value={formState.backdrop}
+            onChange={handleChange}
             required
           />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="status">Status</Label>
-          <Select name="status" required>
+          <Select
+            name="status"
+            required
+            onValueChange={(value) =>
+              setFormState((prev) => ({ ...prev, status: value }))
+            }
+            value={formState.status}
+          >
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Please select a status" />
             </SelectTrigger>
@@ -247,7 +313,7 @@ export default function AddMovieForm({ showDialog }: AddMovieFormProps) {
           Cancel
         </Button>
         <Button type="submit" className="min-w-25.5" disabled={isSubmitting}>
-          {isSubmitting ? "Adding..." : "Add Movie"}
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
       </DialogFooter>
     </form>

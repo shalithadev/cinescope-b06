@@ -1,7 +1,8 @@
 "use server";
 
+import { ObjectId } from "mongodb";
 import { db } from "@/db";
-import type { MoviesActionResponse } from "@/actions/types";
+import type { MoviesActionResponse, AddMovieData } from "@/actions/types";
 
 // Server action to Get a list of movies from the backend API
 // Based on /v1/movies endpoint, with optional limit query parameter
@@ -42,7 +43,7 @@ export async function getMovies({ limit = 8 }: { limit?: number }) {
 export async function searchMovies(query: string) {
   try {
     const movies = await db
-      .collection("movies")
+      .collection("movies_v2")
       .find({ title: { $regex: query, $options: "i" } }) // Case-insensitive search on the title field
       .limit(50)
       .toArray();
@@ -66,6 +67,118 @@ export async function searchMovies(query: string) {
       success: false,
       message: "An error occurred while searching for movies.",
       data: [],
+    };
+  }
+}
+
+// Server action to add a new movie to the database.
+// Based on direct MongoDB insertOne operation to add a new movie document to the movies collection
+export async function addMovie(movieDoc: AddMovieData) {
+  if (!movieDoc.title || !movieDoc.year) {
+    return {
+      success: false,
+      message: "Title and Year are required fields.",
+      data: null,
+    };
+  }
+
+  try {
+    const result = await db.collection("movies_v2").insertOne(movieDoc);
+
+    console.log("Insert Result:", result.insertedId);
+
+    if (result.acknowledged) {
+      return {
+        success: true,
+        message: "Movie added successfully",
+        // data: { id: result.insertedId },
+      };
+    } else {
+      return {
+        success: false,
+        message: "Failed to add movie",
+        data: null,
+      };
+    }
+  } catch (error) {
+    console.error("Error adding movie:", error);
+    return {
+      success: false,
+      message: "An error occurred while adding the movie.",
+      data: null,
+    };
+  }
+}
+
+// Server action to update an existing movie in the database.
+// Based on direct MongoDB replaceOne operation to update a movie document in the movies collection
+export async function updateMovie(id: string, movieDoc: AddMovieData) {
+  // Validate that the required fields are present before attempting to update
+  if (!movieDoc.title || !movieDoc.year) {
+    return {
+      success: false,
+      message: "Title and Year are required fields.",
+      data: null,
+    };
+  }
+
+  try {
+    const result = await db
+      .collection("movies_v2")
+      .updateOne(
+        { _id: ObjectId.createFromHexString(id) },
+        { $set: movieDoc },
+        { upsert: false },
+      );
+
+    if (result.acknowledged && result.modifiedCount > 0) {
+      return {
+        success: true,
+        message: "Movie updated successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: "Failed to update movie",
+        data: null,
+      };
+    }
+  } catch (error) {
+    console.error("Error updating movie:", error);
+    return {
+      success: false,
+      message: "An error occurred while updating the movie.",
+      data: null,
+    };
+  }
+}
+
+// Server action to delete an existing movie from the database.
+// Based on direct MongoDB deleteOne operation to remove a movie document from the movies collection
+export async function deleteMovie(id: string) {
+  try {
+    const result = await db
+      .collection("movies_v2")
+      .deleteOne({ _id: ObjectId.createFromHexString(id) });
+
+    if (result.acknowledged && result.deletedCount > 0) {
+      return {
+        success: true,
+        message: "Movie deleted successfully",
+      };
+    } else {
+      return {
+        success: false,
+        message: "Failed to delete movie",
+        data: null,
+      };
+    }
+  } catch (error) {
+    console.error("Error deleting movie:", error);
+    return {
+      success: false,
+      message: "An error occurred while deleting the movie.",
+      data: null,
     };
   }
 }
