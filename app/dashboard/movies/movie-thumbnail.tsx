@@ -8,6 +8,8 @@ interface MovieThumbnailProps {
   title: string;
 }
 
+// Smart component that handles image loading and error states for movie posters, providing a fallback image when necessary
+// Stateful, container
 export function MovieThumbnail({ poster, title }: MovieThumbnailProps) {
   const [posterUrl, setPosterUrl] = useState(poster ?? "/placeholder.svg");
 

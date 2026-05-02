@@ -1,11 +1,23 @@
 import AddMovieDialog from "@/components/dashboard/add-movie-dialog";
 import MovieData from "./movie-data";
+import MovieSelectors from "./movie-selectors";
 
 // Movies Dashboard Page is a Sever Component,
 // MovieData is a Server Component, MovieTable is a Client Component
 // MovieData is used to fetch data.
 
-export default async function DashboardMoviesPage() {
+type DashboardMoviesPageProps = {
+  searchParams: Promise<{
+    q?: string;
+  }>;
+};
+
+export default async function DashboardMoviesPage(
+  props: DashboardMoviesPageProps,
+) {
+  const searchParams = await props.searchParams;
+  const query = searchParams.q || "";
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -23,12 +35,10 @@ export default async function DashboardMoviesPage() {
       </div>
 
       {/* Movie Selectors */}
-      <div className="text-center p-2 h-10 w-full bg-green-300 rounded-lg">
-        Implement Selectors Here..
-      </div>
+      <MovieSelectors query={query} />
 
       {/* Movie Data Table */}
-      <MovieData />
+      <MovieData query={query} />
     </div>
   );
 }

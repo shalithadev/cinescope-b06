@@ -1,7 +1,14 @@
 import { Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function HeroBanner() {
+interface HeroBannerProps {
+  title: string;
+}
+
+// Dumb component for the landing page hero banner, no data fetching or interactivity, just static content and styling.
+// Mainly responsible for rendering UI based of props received from parent.
+// Stateless, presentational
+export default function HeroBanner({ title }: HeroBannerProps) {
   return (
     <section id="overview" className="relative overflow-hidden">
       {/* Background Image with Overlay */}
@@ -17,7 +24,7 @@ export default function HeroBanner() {
         <div className="flex flex-col items-center justify-center space-y-6 text-center">
           <div className="max-w-3xl space-y-4">
             <h1 className="text-4xl font-bold tracking-tighter text-white drop-shadow-md sm:text-5xl md:text-6xl lg:text-7xl">
-              Discover Amazing Movies
+              {title}
             </h1>
             <p className="mx-auto max-w-175 text-lg text-white/80 drop-shadow-sm md:text-xl">
               Explore our collection of the best movies from around the world.

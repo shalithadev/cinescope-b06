@@ -1,9 +1,15 @@
 import { searchMovies } from "@/actions/movies";
 import MovieTable from "./movie-table";
 
-export default async function MovieData() {
+interface MovieDataProps {
+  query?: string;
+}
+
+// Parent component that fetches movie data and passes it to the MovieTable component
+export default async function MovieData({ query = "" }: MovieDataProps) {
   try {
-    const { data, success } = await searchMovies("");
+    // Fetch movies based on the query using the searchMovies action
+    const { data, success } = await searchMovies(query);
 
     if (!success) {
       throw new Error("No movies found in the database.");
@@ -26,6 +32,7 @@ export default async function MovieData() {
 
     // console.log("Refined Movies:", refinedMovies);
 
+    // Child component that renders the movie table with the refined movie data
     return <MovieTable movies={refinedMovies} />;
   } catch {
     return <div>No Movies Available!</div>;

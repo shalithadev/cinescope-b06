@@ -11,7 +11,7 @@ export default function HomePage() {
       <MainNav />
       {/* Home Page Content */}
       <main className="flex-1">
-        <HeroBanner />
+        <HeroBanner title="Discover Amazing Movies" />
         <FeaturedMovies />
       </main>
       <Footer />

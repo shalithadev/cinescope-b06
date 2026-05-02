@@ -35,6 +35,7 @@ interface MovieTableProps {
 
 export default function MovieTable({ movies }: MovieTableProps) {
   const router = useRouter();
+  // Lifting state up to manage dialogs and selected movie for both update and delete actions
   const [showUpdateDialog, setShowUpdateDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
